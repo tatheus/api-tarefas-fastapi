@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from database import SessionLocal
-from models import Tarefa
+from models import Tarefa, User
 from schemas import TarefaCreate, TarefaResponse
 from auth import verificar_token
 
@@ -67,13 +67,15 @@ def atualizar_tarefa(
 @router.delete("/{tarefa_id}")
 def deletar_tarefa(
     tarefa_id: int,
-    payload=Depends(verificar_token),
+    payload = Depends(verificar_token),
 ):
     db = SessionLocal()
 
+    user_id = int(payload["sub"])
+
     tarefa = db.query(Tarefa).filter(
         Tarefa.id == tarefa_id,
-        Tarefa.usuario_id == int(payload["sub"]),
+        Tarefa.usuario_id == user_id,
     ).first()
 
     if tarefa is None:
@@ -85,3 +87,4 @@ def deletar_tarefa(
     db.close()
 
     return {"mensagem": "tarefa removida"}
+

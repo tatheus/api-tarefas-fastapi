@@ -3,7 +3,7 @@ from schemas import UsuarioCreate, UsuarioLogin, TokenResponse
 from fastapi import APIRouter, Depends, HTTPException
 from database import SessionLocal
 from models import User
-from security import gerar_hash, verificar_senha
+from security import gerar_hash_senha, verificar_senha
 from auth import criar_token, verificar_token
 
 router = APIRouter()
@@ -12,7 +12,7 @@ router = APIRouter()
 def criar_usuario(usuario: UsuarioCreate):
     db = SessionLocal()
     try:
-        senha_hash = gerar_hash(usuario.senha)
+        senha_hash = gerar_hash_senha(usuario.senha)
 
         usuario_db = User(
             nome=usuario.nome,
